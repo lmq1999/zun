@@ -543,6 +543,7 @@ capsule_template = {
         "restartPolicy": capsule_restart_policy,
         "spec": capsule_spec,
         "availabilityZone": availability_zone,
+        "nets": {'type': 'array'}
     },
     "additionalProperties": False,
     "required": ['kind', 'spec', 'metadata']

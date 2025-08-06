@@ -74,7 +74,7 @@ class KuryrNetwork(network.Network):
 
         # IPAM driver specific options
         ipam_options = {
-            "Driver": CONF.network.driver_name,
+            "Driver": "kuryr:latest",
             "Options": {
                 'neutron.net.shared': str(shared)
             },
@@ -170,7 +170,7 @@ class KuryrNetwork(network.Network):
         try:
             docker_network = self.docker.create_network(
                 name=network.name,
-                driver=CONF.network.driver_name,
+                driver="kuryr:latest",
                 enable_ipv6=enable_ipv6,
                 options=options,
                 ipam=ipam_options)

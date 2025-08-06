@@ -1,0 +1,38 @@
+FROM ubuntu:22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        software-properties-common \
+        git \
+        python3 \
+        python3-pip \
+        build-essential \
+        python3-dev \
+        libffi-dev \
+        libssl-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Tạo user zun
+RUN groupadd --system zun && \
+    useradd --system -g zun --home-dir /var/lib/zun -s /bin/false zun
+
+# Clone mã nguồn Zun
+WORKDIR /opt/zun
+COPY . .
+
+
+RUN pip3 install python-memcached
+
+# Cài đặt các thư viện python
+RUN pip3 install pymysql && \
+    pip3 install .
+
+# Tạo thư mục và phân quyền
+RUN mkdir -p /etc/zun /var/log/zun /var/lib/zun/tmp && \
+    chown -R zun:zun /etc/zun /var/log/zun /var/lib/zun
+
+
+CMD ["zun-api", "--config-file", "/etc/zun/zun.conf"]

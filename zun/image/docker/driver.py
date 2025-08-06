@@ -80,7 +80,8 @@ class DockerDriver(driver.ContainerImageDriver):
             try:
                 docker.pull(repo, tag=tag, auth_config=auth_config)
             except errors.NotFound as e:
-                raise exception.ImageNotFound(message=str(e))
+                # Pass the repo as 'image' for ImageNotFound, matching the message template
+                raise exception.ImageNotFound(image=repo)
             except errors.APIError:
                 LOG.exception('Error on pulling image')
                 message = _('Error on pulling image: %(repo)s:%(tag)s') % {
@@ -113,8 +114,9 @@ class DockerDriver(driver.ContainerImageDriver):
                 LOG.error('Docker API error occurred during downloading '
                           'image %s', repo)
         except Exception as e:
-            msg = _('Cannot download image from docker: {0}')
-            raise exception.ZunException(msg.format(e))
+            # Pass a string message directly to ZunException
+            msg = _('Cannot download image from docker: {0}').format(e)
+            raise exception.ZunException(msg)
 
     def search_image(self, context, repo, tag, exact_match):
         image_ref = docker_image.Reference.parse(repo)
